@@ -13,6 +13,15 @@ It is compatible with the cheap chinese 'USB Relay' devices idenfied as::
 Currently only the first relay on the device is supported (in case of devices
 with multiple relays).
 
+Requirements
+------------
+
+* Compatible USB device
+* Ardour 5 or other compatible version
+* Python 3.5 or newer
+* `hidapi <https://pypi.org/project/hidapi/>`_ Python module
+* `python-osc <https://github.com/attwad/python-osc>`_ Python module
+
 Usage
 -----
 

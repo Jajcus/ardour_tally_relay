@@ -6,10 +6,9 @@ This simple script connectes to asks Ardour for current 'recording enabled'
 status via OSC and when recording is enabled toggles a USB relay to turn the
 'Recording' lamp on.
 
-It is compatible with the cheap chinese 'USB Relay' devices idenfied as:
+It is compatible with the cheap chinese 'USB Relay' devices idenfied as::
 
-::
-    ID 16c0:05df Van Ooijen Technische Informatica HID device except mice, keyboards, and joysticks
+  ID 16c0:05df Van Ooijen Technische Informatica HID device except mice, keyboards, and joysticks
 
 Currently only the first relay on the device is supported (in case of devices
 with multiple relays).

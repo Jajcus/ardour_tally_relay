@@ -41,7 +41,8 @@ class OSCClientServer(pythonosc.udp_client.SimpleUDPClient,
 
 class OSCRelay:
     def __init__(self):
-        self._ping_timer = 0
+        self._last_ping = 0
+        self._last_hb = 0
         self.args = None
         self.ardour_addr = None
         self.server = None
@@ -146,7 +147,10 @@ class OSCRelay:
 
     def handle_heartbeat(self, address, value):
         debug("message received{!r}".format((address, value)))
-        self._ping_timer = time.time()
+        self._last_hb = time.time()
+
+    def handle_any(self, address, value):
+        debug("message received{!r}".format((address, value)))
 
     def _start_server(self):
         dispatcher = Dispatcher()
@@ -154,22 +158,30 @@ class OSCRelay:
                                       self.ardour_addr,
                                       dispatcher,
                                       self._service_action)
-        self._ping_timer = time.time()
         dispatcher.map("/rec_enable_toggle", self.handle_rec_enable_toggle)
         dispatcher.map("/record_tally", self.handle_record_tally)
         dispatcher.map("/heartbeat", self.handle_heartbeat)
+        dispatcher.set_default_handler(self.handle_any)
 
     def _ping_ardour(self):
         debug("Asking Ardour for feedback")
         self.server.send_message("/set_surface/feedback", 24)
+        self._last_ping = time.time()
 
     def _service_action(self):
         now = time.time()
-        waited = now - self._ping_timer
+        waited = now - max(self._last_ping, self._last_hb)
         if waited > self.args.interval:
             debug("no message received in %.3fs", waited)
             self._ping_ardour()
-            self._ping_timer = now
+        if self._last_hb:
+            waited = now - self._last_hb
+            if waited > self.args.interval * 3:
+                info("No heartbeat heard from Ardour in %.3fs", waited)
+                self.rec_enable = False
+                self.record_tally = False
+                self._last_hb = 0
+                self.toggle_light()
 
     def _signal_handler(self, signum, frame):
         info("Signal %i received. Exiting.", signum)

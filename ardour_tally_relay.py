@@ -224,7 +224,9 @@ class OSCRelay:
         try:
             self.server.serve_forever(POLL_INTERVAL)
         except (KeyboardInterrupt, SignalReceived):
-            pass
+            self.rec_enable = False
+            self.record_tally = False
+            self.toggle_light()
 
 if __name__ == "__main__":
     osc_relay = OSCRelay()

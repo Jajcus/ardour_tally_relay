@@ -180,7 +180,7 @@ class OSCRelay:
         parser = argparse.ArgumentParser(
                 description="Toggle USB relay in response to Ardour OSC messages.",
                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-        parser.add_argument("--port", "-p", default=12345, type=int,
+        parser.add_argument("--port", "-p", default=8000, type=int,
                             help="Local port to listen on.")
         parser.add_argument("--ardour", "-a", default="localhost:3819",
                             help="Ardour host to connect to, with optional port number.")
